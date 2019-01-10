@@ -45,6 +45,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 // REST-api for courses
 // GET
+// Get all courses
 app.get("/api/courses", (req, res) => {
 
     // Find courses-documents in DB and send result
@@ -59,6 +60,23 @@ app.get("/api/courses", (req, res) => {
             res.json(Courses);
         }
     });
+});
+
+// Get specific course by id
+app.get("/api/courses/:id", (req, res) => {
+
+    // Find course-document in DB and send result
+    Courses.findById(req.params.id, (err, Courses) => {
+        // If there was an error
+        if(err) {
+            // Send error-message
+            res.send(err);
+        }
+        else {
+            // Convert result to JSON and send
+            res.json(Courses);
+        }
+    })
 });
 
 // POST
