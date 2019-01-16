@@ -8,6 +8,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
+const cors = require('cors')
 
 
 
@@ -26,12 +27,12 @@ var app = express();
 
 
 // Allow calls across different domains
-app.all('/*', function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
-	next();
-});
+// app.all('/*', function(req, res, next) {
+// 	res.header("Access-Control-Allow-Origin", "*");
+// 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//     res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
+// 	next();
+// });
 
 
 
@@ -42,6 +43,8 @@ app.use(bodyParser.json());
 // Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
 
+// Enable CORS
+app.use(cors())
 
 
 // REST-api for courses
