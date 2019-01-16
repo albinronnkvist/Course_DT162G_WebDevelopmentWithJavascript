@@ -8,6 +8,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
+const methodOverride = require('method-override');
+
 
 
 // Database
@@ -40,6 +42,9 @@ app.use(bodyParser.json());
 
 // Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
+
+// Override method
+app.use(methodOverride('_method'));
 
 
 
