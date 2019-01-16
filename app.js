@@ -39,6 +39,9 @@ app.all('/*', function(req, res, next) {
 // Parse application/json
 app.use(bodyParser.json());
 
+// Parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended: false}));
+
 
 
 // REST-api for courses
