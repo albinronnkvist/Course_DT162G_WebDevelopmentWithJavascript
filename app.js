@@ -106,7 +106,7 @@ app.post("/api/courses/add", (req, res) => {
     });
 
     // Redirect to index
-    res.redirect("/");
+    res.send(course);
 });
 
 // PUT
@@ -177,7 +177,7 @@ app.put("/api/courses/update/:id", (req, res) => {
                     } 
                     else {
                         // Redirect to index
-                        res.redirect("/");
+                        res.send(course);
                     }
                 });
             }
@@ -203,7 +203,7 @@ app.delete("/api/courses/delete/:id", (req, res) => {
         }
 
         // Redirect to index
-        res.redirect("/");
+        res.send(Courses);
     });
 });
 
