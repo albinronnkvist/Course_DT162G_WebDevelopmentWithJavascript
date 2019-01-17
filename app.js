@@ -8,7 +8,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
-const cors = require('cors')
+const cors = require('cors');
+const methodOverride = require('method-override');
 
 
 
@@ -26,16 +27,6 @@ var app = express();
 
 
 
-// Allow calls across different domains
-// app.all('/*', function(req, res, next) {
-// 	res.header("Access-Control-Allow-Origin", "*");
-// 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//     res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
-// 	next();
-// });
-
-
-
 // Body parser
 // Parse application/json
 app.use(bodyParser.json());
@@ -44,7 +35,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Enable CORS
-app.use(cors())
+app.use(cors());
+
+// Override with the X-HTTP-Method-Override header in the request
+app.use(methodOverride('X-HTTP-Method-Override'));
+
 
 
 // REST-api for courses
@@ -193,6 +188,7 @@ app.put("/api/courses/update/:id", (req, res) => {
 });
 
 // DELETE
+// Delete course
 app.delete("/api/courses/delete/:id", (req, res) => {
 
     // Get the id from id-parameter
