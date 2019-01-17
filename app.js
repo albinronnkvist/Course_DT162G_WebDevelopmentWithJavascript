@@ -28,8 +28,6 @@ var app = express();
 // Override with the X-HTTP-Method-Override header in the request
 app.use(methodOverride('X-HTTP-Method-Override'));
 
-
-
 // Body parser
 // Parse application/json
 app.use(bodyParser.json());
@@ -106,6 +104,9 @@ app.post("/api/courses/add", (req, res) => {
             res.send(err);
         }
     });
+
+    // Redirect to index
+    res.redirect("/");
 });
 
 // PUT
@@ -174,6 +175,10 @@ app.put("/api/courses/update/:id", (req, res) => {
                         // Send error message
                         res.send(err);
                     } 
+                    else {
+                        // Redirect to index
+                        res.redirect("/");
+                    }
                 });
             }
         }
@@ -196,6 +201,9 @@ app.delete("/api/courses/delete/:id", (req, res) => {
             // Send error message
             res.send(err);
         }
+
+        // Redirect to index
+        res.redirect("/");
     });
 });
 
