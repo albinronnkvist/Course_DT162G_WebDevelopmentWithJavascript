@@ -1,0 +1,1 @@
+Denna webbplats ansluter till courses-webbtjänsten och används för att administrera kurser och projekt. Webbplatsen är skapad med JavaScript-ramverket Vue.js och konsumerar data från webbtjänsten med hjälp av HTTP-klienten axios.

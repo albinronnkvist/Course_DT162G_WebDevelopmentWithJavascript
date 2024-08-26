@@ -1,0 +1,22 @@
+{
+  "name": "admin-website",
+  "version": "1.0.0",
+  "description": "Website for administration of Albin's courses",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Albin Rönnkvist",
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "^4.0.0",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-imagemin": "^5.0.3",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-terser": "^1.1.7",
+    "querystring": "^0.2.0"
+  }
+}

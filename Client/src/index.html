@@ -1,0 +1,477 @@
+<!--
+Description: Administration-website for handling courses and projects
+Author: Albin Rönnkvist
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Title -->
+    <title>A.R. | Kurser - Administration</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/ios/30/000000/briefcase.png"/>
+
+    <!-- Include CSS-files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/main-sass.css">
+
+    <!-- Include jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <!-- Vue App -->
+    <div id="app">
+
+        <!-- Navbar -->
+        <nav>
+            <div class="nav-wrapper blue darken-1">
+                <a href="index.html" class="brand-logo center">A.R. | Kurser</a>
+            </div>
+        </nav>
+        <br>
+
+
+
+        <!-- Main container -->
+        <div class="row z-depth-1">
+
+            <!-- Tabs -->
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s6"><a href="#Start">Start</a></li>
+                    <li class="tab col s6"><a href="#skapa">Skapa</a></li>
+                </ul>
+            </div>           
+            <br>
+
+
+
+            <!-- Start-tab -->
+            <div id="Start" class="col s12">
+                <h1 class="center-align">Start</h1>
+                <p class="center-align">Läs, redigera & radera.</p> 
+                
+                <!-- Courses  -->
+                <div class="centerDiv">
+                    <div class="col s12 m12 l12">
+
+                        <!-- Choose a course -->
+                        <h2>Kurser</h2>
+                        <label>Välj en kurs</label>
+                        <select 
+                            v-model="selectedCourseId" 
+                            @change="getSpecificCourse(selectedCourseId)" 
+                            class="browser-default"
+                        >
+                            <option v-bind:value="course._id" v-for="course in courses">
+                                {{ course.courseName }}
+                            </option>
+                        </select>
+                        <div style="clear:both"></div>
+                        <br>
+                        
+                        <!-- Specific course -->
+                        <div class="specificCourseContainer z-depth-1" v-if="specificCourse != null">
+
+                            <!-- Course info -->
+                            <div class="courseInfo" v-if="specificCourse != null">
+                                <!-- Edit course -->
+                                <a 
+                                    class="btn-floating waves-effect waves-light blue modal-trigger pulse" 
+                                    href="#modalUpdate" 
+                                    @click="setFormData"
+                                    title="Redigera kurs"
+                                >
+                                    <i class="material-icons">edit</i>
+                                </a>
+                                <!-- Delete course -->
+                                <a 
+                                    class="btn-floating waves-effect waves-light red pulse" 
+                                    @click.prevent="deleteCourse(specificCourse._id)"
+                                    title="Radera kurs"
+                                >
+                                    <i class="material-icons">delete</i>
+                                </a>
+
+                                <!-- courseName -->
+                                <h2 class="heading">{{ specificCourse.courseName }}</h2>
+                                <!-- tags -->
+                                <div class="chip">
+                                    <p class="pSmall"><i class="material-icons">label</i> {{ specificCourse.tags }} </p>
+                                </div>
+                                <!-- summary -->
+                                <h3>Översikt</h3>
+                                <p>{{ specificCourse.summary }}</p>
+                                <!-- courseWebsite-->
+                                <p><a v-bind:href="specificCourse.courseWebsite" target="_blank">Kurswebbplats <i class="material-icons">chevron_right</i></a></p>
+                            </div>
+            
+                            <!-- Project info -->
+                            <h3 v-if="specificCourse != null && specificCourse.projects.length !== 0">Projekt</h3>
+                            <div class="card s12 m12 l12" v-if="specificCourse != null">        
+                                <!-- Card -->
+                                <div class="card-content" v-for="project in specificCourse.projects">
+
+                                    <!-- projectName + show more -->
+                                    <span class="card-title activator grey-text text-darken-4">{{ project.projectName }}<i class="material-icons right">more_vert</i></span>
+                                    <!-- projectSummary -->
+                                    <p>{{ project.projectSummary }}</p>
+                                    <br>
+                                    <p>
+                                        <!-- projectWebsite -->
+                                        <a 
+                                            v-bind:href="project.projectWebsite" 
+                                            target="_blank"
+                                        >
+                                            Webbplats <i class="material-icons">chevron_right</i>
+                                        </a>
+                                        <span v-if="project.projectRepository != null && project.projectRepository.length > 0">&nbsp;|&nbsp;</span>
+                                        <!-- projectRepository -->
+                                        <a 
+                                            v-if="project.projectRepository != null && project.projectRepository.length > 0"
+                                            v-bind:href="project.projectRepository" 
+                                            target="_blank"
+                                        >
+                                        Repository <i class="material-icons">chevron_right</i>
+                                        </a>
+                                    </p>
+                                </div>        
+                                <!-- More info -->
+                                <div class="card-reveal" v-for="project in specificCourse.projects">
+                                    <!-- projectName -->
+                                    <span class="card-title grey-text text-darken-4">{{ project.projectName }}<i class="material-icons right">close</i></span>
+                                    <!-- projectDescription -->
+                                    <p>{{ project.projectDescription }}</p>
+                                </div>
+                            </div> 
+
+                        </div><!-- ./ Specific course -->                    
+                    </div><!-- ./ Courses -->
+                </div><!-- ./ .centerDiv -->
+
+
+
+                <!-- Update-modal -->
+                <div id="modalUpdate" class="modal">
+                    <div class="modal-content">
+
+                        <!-- Update-form -->
+                        <form id="updateCourse" class="col s12" @submit.prevent="updateCourse(specificCourse._id)">    
+                            
+                            <!-- Update course -->
+                            <!-- courseName -->
+                            <div class="input-field col s12">
+                                <input 
+                                    v-model="putCourseName" 
+                                    id="putCourseName" 
+                                    placeholder="Kursnamn" 
+                                    type="text" 
+                                    class="validate" 
+                                    required
+                                >
+                                <label for="putCourseName">Kursnamn</label>
+                            </div>
+                            <!-- tags -->
+                            <div class="input-field col s12">
+                                <input 
+                                    v-model="putTags" 
+                                    id="putTags" 
+                                    placeholder="Taggar" 
+                                    type="text" 
+                                    class="validate"
+                                >
+                                <label for="putTags">Taggar</label>
+                            </div>
+                            <!-- summary -->
+                            <div class="input-field col s12">
+                                <textarea 
+                                    v-model="putSummary" 
+                                    id="putSummary" 
+                                    class="browser-default"
+                                >
+                                </textarea>   
+                                <label for="putSummary">Översikt</label>                            
+                            </div>
+                            <!-- description -->
+                            <div class="input-field col s12">
+                                <textarea 
+                                    v-model="putDescription" 
+                                    id="putDescription" 
+                                    class="browser-default"
+                                >
+                                </textarea>
+                                <label for="putDescription">Beskrivning</label>
+                            </div>
+                            <!-- courseWebsite -->
+                            <div class="input-field col s12">
+                                <input 
+                                    v-model="putCourseWebsite" 
+                                    id="putCourseWebsite" 
+                                    placeholder="Kurswebbplats" 
+                                    type="text" 
+                                    class="validate"
+                                >
+                                <label for="putCourseWebsite">Kurswebbplats</label>
+                            </div>
+                            <div style="clear:both"></div>
+
+
+
+                            <!-- Update project -->
+                            <ul class="collapsible">
+                                <li>
+                                  <div class="collapsible-header"><p><i class="material-icons">edit</i>Redigera projekt</p></div>
+                                  <div class="collapsible-body">
+                                        <!-- projectName -->
+                                        <div class="input-field col s12">
+                                            <input 
+                                                v-model="putProjectName"
+                                                id="putProjectName" 
+                                                placeholder="Projektnamn" 
+                                                type="text" 
+                                                class="validate"
+                                             >
+                                            <label for="putProjectName">Projektnamn</label>
+                                        </div>
+                                        <!-- projectTags -->
+                                        <div class="input-field col s12">
+                                            <input 
+                                                v-model="putProjectTags" 
+                                                id="putProjectTags" 
+                                                placeholder="Taggar" 
+                                                type="text" 
+                                                class="validate"
+                                            >
+                                            <label for="putProjectTags">Taggar</label>
+                                        </div>
+                                        <!-- projectSummary -->
+                                        <div class="input-field col s12">
+                                            <textarea 
+                                                v-model="putProjectSummary" 
+                                                id="putProjectSummary" 
+                                                class="browser-default"
+                                            >
+                                            </textarea>
+                                            <label for="putProjectSummary">Översikt</label>
+                                        </div>
+                                        <!-- projectDescription -->
+                                        <div class="input-field col s12">
+                                            <textarea 
+                                                v-model="putProjectDescription" 
+                                                id="putProjectDescription" 
+                                                class="browser-default"
+                                            >
+                                            </textarea>
+                                            <label for="putProjectDescription">Beskrivning</label>
+                                        </div>
+                                        <!-- projectWebsite -->
+                                        <div class="input-field col s12">
+                                            <input 
+                                                v-model="putProjectWebsite" 
+                                                id="putProjectWebsite" 
+                                                placeholder="Webbplats" 
+                                                type="text" 
+                                                class="validate"
+                                            >
+                                            <label for="putProjectWebsite">Webbplats</label>
+                                        </div>
+                                        <!-- projectRepository -->
+                                        <div class="input-field col s12">
+                                            <input 
+                                                v-model="putProjectRepository" 
+                                                id="putProjectRepository" 
+                                                placeholder="Repository" 
+                                                type="text" 
+                                                class="validate"
+                                            >
+                                            <label for="putProjectRepository">Repository</label>
+                                        </div>
+                                  </div>
+                                </li>
+                            </ul>
+
+                            <br>
+                            <!-- Submit -->
+                            <button type="submit" class="waves-effect waves-light btn-large green">Uppdatera</button>
+                            <!-- Cancel -->
+                            <a href="#!" class="modal-close waves-effect waves-light btn-large red">Avbryt</a>
+                        </form>
+                    </div><!-- ./ .modal-content -->
+                </div><!-- ./ .modal -->
+            </div><!-- ./ Start-tab -->
+
+
+
+            <!-- Create-tab -->
+            <div id="skapa" class="col s12">
+
+                <h1 class="center-align">Skapa</h1>
+                <p class="center-align">Skapa ny kurs.</p>
+
+                <!-- Form -->
+                <div class="centerDiv">
+                    <form id="addCourse" class="col s12" @submit.prevent="addCourse">
+                        
+                        <!-- Add course -->
+                        <!-- courseName -->
+                        <div class="input-field col s12">
+                            <input 
+                                v-model="postCourseName" 
+                                id="postCourseName" 
+                                placeholder="Kursnamn" 
+                                type="text" 
+                                class="validate" 
+                                required
+                            >
+                            <label for="postCourseName">Kursnamn</label>
+                        </div>
+                        <!-- tags -->
+                        <div class="input-field col s12">
+                            <input 
+                                v-model="postTags" 
+                                id="postTags" 
+                                placeholder="Taggar" 
+                                type="text" 
+                                class="validate"
+                            >
+                            <label for="postTags">Taggar</label>
+                        </div>
+                        <!-- summary -->
+                        <div class="input-field col s12">
+                            <textarea 
+                                v-model="postSummary" 
+                                id="postSummary" 
+                                class="browser-default"
+                            >
+                            </textarea>
+                            <label for="postSummary">Översikt</label>
+                        </div>
+                        <!-- description -->
+                        <div class="input-field col s12">
+                            <textarea 
+                                v-model="postDescription" 
+                                id="postDescription" 
+                                class="browser-default"
+                            >
+                            </textarea>
+                            <label for="postDescription">Beskrivning</label>
+                        </div>
+                        <!-- courseWebsite -->
+                        <div class="input-field col s12">
+                            <input 
+                                v-model="postCourseWebsite" 
+                                id="postCourseWebsite" 
+                                placeholder="Kurswebbplats" 
+                                type="text" 
+                                class="validate"
+                            >
+                            <label for="postCourseWebsite">Kurswebbplats</label>
+                        </div>
+                        <div style="clear:both"></div>
+
+
+
+                        <!-- Add project -->
+                        <ul class="collapsible">
+                            <li>
+                              <div class="collapsible-header"><p><i class="material-icons">add_circle</i>Lägg till projekt</p></div>
+                              <div class="collapsible-body">
+                                    <!-- projectName -->
+                                    <div class="input-field col s12">
+                                        <input 
+                                            v-model="postProjectName" 
+                                            id="postProjectName" 
+                                            placeholder="Projektnamn" 
+                                            type="text" 
+                                            class="validate"
+                                        >
+                                        <label for="postProjectName">Projektnamn</label>
+                                    </div>
+                                    <!-- projectTags -->
+                                    <div class="input-field col s12">
+                                        <input 
+                                            v-model="postProjectTags" 
+                                            id="postProjectTags" 
+                                            placeholder="Taggar" 
+                                            type="text" 
+                                            class="validate"
+                                        >
+                                        <label for="postProjectTags">Taggar</label>
+                                    </div>
+                                    <!-- projectSummary -->
+                                    <div class="input-field col s12">
+                                        <textarea 
+                                            v-model="postProjectSummary" 
+                                            id="postProjectSummary" 
+                                            class="browser-default"
+                                        >
+                                        </textarea>
+                                        <label for="postProjectSummary">Översikt</label>
+                                    </div>
+                                    <!-- projectDescription -->
+                                    <div class="input-field col s12">
+                                        <textarea 
+                                            v-model="postProjectDescription" 
+                                            id="postProjectDescription" 
+                                            class="browser-default"
+                                        >
+                                        </textarea>
+                                        <label for="postProjectDescription">Beskrivning</label>
+                                    </div>
+                                    <!-- ProjectWebsite -->
+                                    <div class="input-field col s12">
+                                        <input 
+                                            v-model="postProjectWebsite" 
+                                            id="postProjectWebsite" 
+                                            placeholder="Webbplats" 
+                                            type="text" 
+                                            class="validate"
+                                        >
+                                        <label for="postProjectWebsite">Webbplats</label>
+                                    </div>
+                                    <!-- ProjectRepository -->
+                                    <div class="input-field col s12">
+                                        <input 
+                                            v-model="postProjectRepository" 
+                                            id="postProjectRepository" 
+                                            placeholder="Repository" 
+                                            type="text" 
+                                            class="validate"
+                                        >
+                                        <label for="postProjectRepository">Repository</label>
+                                    </div>
+                              </div>
+                            </li>
+                        </ul>
+
+                        <br>
+                        <!-- Submit -->
+                        <button type="submit" class="waves-effect waves-light btn-large green">Skapa</button>
+                    </form>
+                </div><!-- ./ centerDiv -->
+            </div><!-- ./ Create-tab -->
+        </div><!-- ./ Main container -->
+    </div><!-- ./ Vue App -->
+
+
+
+    <!-- SCRIPTS -->
+    <!-- Include Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- Include Vue.js development version -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+    <!-- Include Materialize js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Include own scripts -->
+    <script src="js/main.min.js"></script>
+</body>
+</html>

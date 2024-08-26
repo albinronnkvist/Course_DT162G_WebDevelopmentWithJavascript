@@ -1,0 +1,67 @@
+/*
+File: materializeOverrides.scss
+Description: Override Materialize styling
+Author: Albin Rönnkvist
+*/
+
+
+
+// Imports
+@import "partials/config";
+
+
+
+// Materialize overrides
+// Modal
+#modalUpdate.modal {
+    background-color: #fff;
+}
+
+.hiddendiv {
+    max-width: 100%;
+}
+
+// Main container
+.row {
+    @media screen and (min-width: $break-large) {
+        width: 60%;
+    }
+
+    @media screen and (min-width: $break-medium) and (max-width: $break-large) {
+        width: 80%;
+    }
+
+    padding-bottom: 60px;
+}
+
+// Vertically align materialize icons
+p i.material-icons {
+    display: inline-flex;
+    vertical-align: middle;
+    font-size: 1.6rem;
+    line-height: 1.5em;
+}
+
+// Tabs
+.tabs {
+    padding-bottom: 40px;
+
+    .indicator {
+        background-color: $main-color !important;
+    }
+
+    .tab {
+        a {
+            color: $main-color !important;
+
+            &:focus.active {
+                background-color: lighten($main-color, 40%) !important;
+            }
+        }
+    }
+}
+
+// Button
+.btn-floating {
+    margin-right: 10px;
+}
