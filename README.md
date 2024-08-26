@@ -10,6 +10,3 @@ Restbaserad webbtjänst för att hantera kurser och projekt. Webbtjänsten är s
 [__Repository för webbplats__](https://github.com/albinronnkvist/Kurs_JavaScriptbaserad-webbutveckling_AdminWebsite)
 |
 [__Rapport__](https://albinronnkvist.se/skola/dt162g/projekt/rapport.pdf)
-## Installation
-1. Ladda ned projektet med kommandot: _git clone https://github.com/albinronnkvist/Kurs_JavaScriptbaserad-webbutveckling_WebService_
-2. Installera alla dependencies med kommandot: _npm install_.
